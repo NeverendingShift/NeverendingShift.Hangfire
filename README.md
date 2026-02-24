@@ -1,7 +1,6 @@
 # NeverendingShift.Hangfire
 
-Advanced Hangfire extensions providing scope-based job context access  
-and infrastructure-ready execution filters.
+Advanced Hangfire extensions providing scope-based job context access and infrastructure-ready execution filters.
 
 Designed for enterprise-grade background processing.
 
