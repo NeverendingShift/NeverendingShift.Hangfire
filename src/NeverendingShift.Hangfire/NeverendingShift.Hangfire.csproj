@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+
+    <!-- NuGet metadata -->
+    <PackageId>NeverendingShift.Hangfire</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Daniel Barwikowski</Authors>
+    <Company>NeverendingShift</Company>
+    <Description>
+      Advanced Hangfire extensions including JobContext accessor,
+      scope-based execution context and enterprise-ready filters.
+    </Description>
+    <PackageTags>hangfire;jobcontext;filters;background-jobs</PackageTags>
+    <RepositoryUrl>https://github.com/NeverendingShift/NeverendingShift.Hangfire</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <Deterministic>true</Deterministic>
+
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Hangfire.Core" Version="[1.8.0,2.0.0)" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.2.0" PrivateAssets="All"/>
+  </ItemGroup>
+
+</Project>
