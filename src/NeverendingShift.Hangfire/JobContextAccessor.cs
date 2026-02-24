@@ -4,11 +4,9 @@ namespace NeverendingShift.Hangfire
 {
     internal static class JobContextAccessor
     {
-        private static IJobContextAccessor _accessor
-            = new DefaultJobContextScopeFactory();
+        private static IJobContextAccessor _accessor = new DefaultJobContextScopeFactory();
 
-        private static IJobContextScopeFactory _scopeFactory
-            = (IJobContextScopeFactory)_accessor;
+        private static IJobContextScopeFactory _scopeFactory = (IJobContextScopeFactory)_accessor;
 
         public static IJobContextAccessor Instance => _accessor;
 
