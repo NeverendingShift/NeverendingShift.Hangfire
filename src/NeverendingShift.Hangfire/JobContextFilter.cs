@@ -5,16 +5,21 @@ namespace NeverendingShift.Hangfire
 {
     public sealed class JobContextFilter : IServerFilter
     {
-        private IDisposable _scope;
+        private const string ScopeKey = "__NeverendingShift_JobContext_Scope";
 
         public void OnPerforming(PerformingContext context)
         {
-            _scope = JobContextAccessor.ScopeFactory.BeginScope(context);
+            var scope = JobContextAccessor.ScopeFactory.BeginScope(context);
+            context.Items[ScopeKey] = scope;
         }
 
         public void OnPerformed(PerformedContext context)
         {
-            _scope?.Dispose();
+            if (context.Items.TryGetValue(ScopeKey, out var scopeObj)
+                && scopeObj is IDisposable scope)
+            {
+                scope.Dispose();
+            }
         }
     }
 }
