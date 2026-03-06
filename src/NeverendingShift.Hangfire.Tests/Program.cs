@@ -18,16 +18,18 @@ namespace NeverendingShift.Hangfire.Tests
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddHangfirePerformingContextAccessor();
 
-            builder.Services.AddHangfire(config =>
+            builder.Services.AddHangfire((serviceProvider, config)  =>
             {
                 config.UseInMemoryStorage();
-                config.UseNeverendingShiftJobContext();
+                config.UsePerformingContextAccessor(serviceProvider);
                 config.UseConsole();
             });
 
             builder.Services.AddHangfireServer();
 
+            builder.Services.AddTransient<IPerformingContextAccessor, PerformingContextAccessor>();
             builder.Services.AddTransient<Jobs.Common.ILogger, Logger>();
 
             var app = builder.Build();
