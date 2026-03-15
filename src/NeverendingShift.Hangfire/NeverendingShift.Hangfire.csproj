@@ -8,7 +8,7 @@
 
     <!-- NuGet metadata -->
     <PackageId>NeverendingShift.Hangfire</PackageId>
-    <Version>1.0.0</Version>
+    <Version>0.1.0</Version>
     <Authors>Daniel Barwikowski</Authors>
     <Company>NeverendingShift</Company>
     <Description>
@@ -35,11 +35,14 @@
     <!-- Suppress warnings for missing XML comments if needed -->
     <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <!-- Include README in package -->
-  <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="\" />
-  </ItemGroup>
 
   <!-- Common dependencies for all frameworks -->
   <ItemGroup>

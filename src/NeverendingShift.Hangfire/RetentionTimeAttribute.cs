@@ -3,70 +3,55 @@ using Hangfire.States;
 using Hangfire.Storage;
 using System;
 
-namespace NeverendingShift.Hangfire
+namespace NeverendingShift.Hangfire;
+
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
+public sealed class RetentionTimeAttribute : JobFilterAttribute, IApplyStateFilter
 {
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-    public sealed class RetentionTimeAttribute : JobFilterAttribute, IApplyStateFilter
+    private readonly RetentionPolicy _policy;
+
+    public int Days { get; set; }
+    public int Hours { get; set; }
+    public int Minutes { get; set; }
+
+    public RetentionTimeAttribute(
+        RetentionPolicy retentionPolicy = RetentionPolicy.OnSucceeded)
     {
-        private readonly RetentionPolicy _policy;
+        _policy = retentionPolicy;
+    }
 
-        public int Days { get; set; }
-        public int Hours { get; set; }
-        public int Minutes { get; set; }
+    public void OnStateApplied(
+        ApplyStateContext context,
+        IWriteOnlyTransaction transaction)
+    {
+        if (!ShouldApply(context.NewState))
+            return;
 
-        public RetentionTimeAttribute(
-            RetentionPolicy retentionPolicy = RetentionPolicy.OnSucceeded)
+        var retention = new TimeSpan(Days, Hours, Minutes, 0);
+
+        if (retention < TimeSpan.Zero)
+            throw new InvalidOperationException(
+                $"Retention time cannot be negative but was: {retention}");
+
+        context.JobExpirationTimeout = retention;
+    }
+
+    public void OnStateUnapplied(
+        ApplyStateContext context,
+        IWriteOnlyTransaction transaction)
+    {
+    }
+
+    private bool ShouldApply(IState newState)
+    {
+        return _policy switch
         {
-            _policy = retentionPolicy;
-        }
-
-        public void OnStateApplied(
-            ApplyStateContext context,
-            IWriteOnlyTransaction transaction)
-        {
-            if (!ShouldApply(context.NewState))
-                return;
-
-            var retention = new TimeSpan(Days, Hours, Minutes, 0);
-
-            if (retention < TimeSpan.Zero)
-                throw new InvalidOperationException(
-                    $"Retention time cannot be negative but was: {retention}");
-
-            context.JobExpirationTimeout = retention;
-        }
-
-        public void OnStateUnapplied(
-            ApplyStateContext context,
-            IWriteOnlyTransaction transaction)
-        {
-        }
-
-        private bool ShouldApply(IState newState)
-        {
-            switch (_policy)
-            {
-                case RetentionPolicy.OnSucceeded:
-                    return newState is SucceededState;
-
-                case RetentionPolicy.OnFailed:
-                    return newState is FailedState;
-
-                case RetentionPolicy.Always:
-                    return newState is FailedState
-                        || newState is DeletedState
-                        || newState is SucceededState;
-
-                default:
-                    return false;
-            }
-        }
-
-        public enum RetentionPolicy
-        {
-            OnSucceeded,
-            OnFailed,
-            Always
-        }
+            RetentionPolicy.OnSucceeded => newState is SucceededState,
+            RetentionPolicy.OnFailed => newState is FailedState,
+            RetentionPolicy.Always => newState is FailedState
+                                || newState is DeletedState
+                                || newState is SucceededState,
+            _ => false,
+        };
     }
 }

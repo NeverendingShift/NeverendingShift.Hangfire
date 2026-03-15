@@ -1,9 +1,8 @@
 ﻿using Hangfire.Server;
 
-namespace NeverendingShift.Hangfire
+namespace NeverendingShift.Hangfire;
+
+public interface IPerformingContextAccessor
 {
-    public interface IPerformingContextAccessor
-    {
-        PerformingContext Current { get; set; }
-    }
+    PerformingContext Current { get; set; }
 }
